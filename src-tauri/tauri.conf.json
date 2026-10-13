@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Olaria",
+  "version": "0.3.0",
+  "identifier": "app.olaria.desktop",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Olaria",
+        "width": 1400,
+        "height": 900,
+        "minWidth": 1024,
+        "minHeight": 680,
+        "dragDropEnabled": true,
+        "theme": null
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' ipc: http://ipc.localhost; script-src 'self' 'unsafe-inline' 'unsafe-eval' asset: https://asset.localhost http://asset.localhost; style-src 'self' 'unsafe-inline' asset: https://asset.localhost http://asset.localhost https://fonts.googleapis.com; font-src 'self' data: asset: https://asset.localhost http://asset.localhost https://fonts.gstatic.com; img-src 'self' data: blob: asset: https://asset.localhost http://asset.localhost; media-src 'self' data: blob: asset: https://asset.localhost http://asset.localhost; connect-src 'self' ipc: http://ipc.localhost asset: https://asset.localhost http://asset.localhost; frame-src 'self' data: blob: asset: https://asset.localhost http://asset.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "publisher": "Olaria",
+    "copyright": "",
+    "shortDescription": "Construtor de landing pages",
+    "longDescription": "Olaria é um construidor visual de landing pages: modelos prontos, edição no navegador interno, código aberto a qualquer momento e exportação em arquivo HTML único, publicável no GitHub Pages.",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ]
+  }
+}
