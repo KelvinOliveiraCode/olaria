@@ -9,7 +9,6 @@ import { confirmDialog, openModal, closeModal, toast } from './core/ui.js'
 import { hasBlock, injectUtils, injectAnim } from './core/docutils.js'
 import { rewriteForPreview, restoreForSave } from './core/assets.js'
 import { paint, send, serialize, getVars, isReady, initPreview } from './modules/preview.js'
-import { initEditor, getEditorValue, setEditorValue, refreshEditor } from './modules/code-editor.js'
 import { renderProps, initProps, propsHint, defaultHint } from './modules/props-panel.js'
 import { renderInsertPanel } from './modules/insert-panel.js'
 import { renderAnimPanel } from './modules/anim-panel.js'
@@ -45,6 +44,42 @@ let syncTimer = null
 let readyWaiter = null
 let editorChangeTimer = null
 
+// Lazy-loading do CodeMirror
+let editorModulePromise = null
+let editorModuleLoaded = false
+let editorInitPending = null
+
+async function ensureEditorModule() {
+  if (editorModuleLoaded) return
+  if (!editorModulePromise) {
+    editorModulePromise = import('./modules/code-editor.js').then((mod) => {
+      editorModuleLoaded = true
+      return mod
+    })
+  }
+  return editorModulePromise
+}
+
+async function initEditorLazy({ onChange, onSave }) {
+  const { initEditor } = await ensureEditorModule()
+  return initEditor({ onChange, onSave })
+}
+
+async function getEditorValueLazy() {
+  const { getEditorValue } = await ensureEditorModule()
+  return getEditorValue()
+}
+
+async function setEditorValueLazy(text) {
+  const { setEditorValue } = await ensureEditorModule()
+  setEditorValue(text)
+}
+
+async function refreshEditorLazy() {
+  const { refreshEditor } = await ensureEditorModule()
+  refreshEditor()
+}
+
 bus.on('preview:ready', () => {
   if (readyWaiter) {
     const w = readyWaiter
@@ -72,7 +107,7 @@ function once(event, fn, timeout = 4000) {
 export function init() {
   initProps()
   initPreview()
-  initEditor({
+  initEditorLazy({
     onChange: (value) => {
       state.doc = value
       markDirty(true)
@@ -222,12 +257,14 @@ function setMode(mode) {
   }
 
   if (comCodigo) {
-    setEditorValue(state.doc)
+    // Inicializa o editor se ainda não foi feito; setEditorValueLazy
+    // já aguarda o módulo carregar antes de escrever.
+    setEditorValueLazy(state.doc)
     // O CodeMirror mede o tamanho ao virar visível: rAF simples ainda
     // corre antes do layout do painel recém-mostrado. Duplo rAF + um
     // fallback garantem a remediação em qualquer navegador/WebView.
-    requestAnimationFrame(() => requestAnimationFrame(refreshEditor))
-    setTimeout(refreshEditor, 60)
+    requestAnimationFrame(() => requestAnimationFrame(refreshEditorLazy))
+    setTimeout(refreshEditorLazy, 60)
   }
 }
 
@@ -388,7 +425,7 @@ async function currentDoc() {
     }
   }
   // O editor de código está sempre sincronizado; ele serve de reserva.
-  return getEditorValue()
+  return getEditorValueLazy()
 }
 
 async function save() {
@@ -453,7 +490,7 @@ async function syncFromRuntime() {
     state.doc = html
     markDirty(true)
     updateSaveState()
-    setEditorValue(html)
+    setEditorValueLazy(html)
   } catch (err) {
     console.warn('syncFromRuntime: serialize falhou:', err)
     // Mantém o state.doc atual; o editor de código tem a versão mais recente
@@ -492,9 +529,12 @@ function pushHistory() {
 
 function undo() {
   if (!state.history.length) return
+  // O histórico guarda os estados ANTERIORES (pushHistory roda em 'mutated',
+  // antes de state.doc receber a mudança), então undo devolve o ultimo item
+  // e o estado atual vai para o futuro.
   state.future.push({
     doc: state.doc,
-    selectedPath: state.selected ? state.selected.path : null
+    selectedPath: state.selected ? state.selected.path : null,
   })
   const entry = state.history.pop()
   state.doc = entry.doc
@@ -506,7 +546,7 @@ function redo() {
   if (!state.future.length) return
   state.history.push({
     doc: state.doc,
-    selectedPath: state.selected ? state.selected.path : null
+    selectedPath: state.selected ? state.selected.path : null,
   })
   const entry = state.future.pop()
   state.doc = entry.doc
@@ -520,7 +560,7 @@ function applyHistoryDoc() {
   markDirty(true)
   updateSaveState()
   paint()
-  if (state.mode !== 'edit' && state.mode !== 'view') setEditorValue(state.doc)
+  if (state.mode !== 'edit' && state.mode !== 'view') setEditorValueLazy(state.doc)
   updateUndoButtons()
 }
 
@@ -841,4 +881,22 @@ function wireDragDrop() {
 
 function wireBus() {
   bus.on('vars', () => {})
+}
+
+/* ---------------- exports para testes ---------------- */
+
+export {
+  loadDoc,
+  setMode,
+  currentDoc,
+  save,
+  pushHistory,
+  undo,
+  redo,
+  applyHistoryDoc,
+  wireDevices,
+  syncFromRuntime,
+  getEditorValueLazy,
+  initEditorLazy,
+  ensureEditorModule,
 }
