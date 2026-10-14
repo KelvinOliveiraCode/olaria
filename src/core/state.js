@@ -37,14 +37,19 @@ export const state = {
 
 export function markDirty(v = true) {
   state.dirty = v
-  document.getElementById('dirtyDot').hidden = !v
-  document.getElementById('saveBtn').textContent = v ? 'Salvar' : 'Salvar'
+  const dirtyDot = document.getElementById('dirtyDot')
+  const saveBtn = document.getElementById('saveBtn')
+  if (dirtyDot) dirtyDot.hidden = !v
+  if (saveBtn) saveBtn.textContent = v ? 'Salvar' : 'Salvar'
   bus.emit('dirty', v)
 }
 
 export function setFile(path) {
   state.filePath = path
   const name = path ? path.replace(/\\/g, '/').split('/').pop() : 'Sem título'
-  document.getElementById('fileName').textContent = name
-  document.getElementById('fileName').title = path || 'Documento sem nome'
+  const fileName = document.getElementById('fileName')
+  if (fileName) {
+    fileName.textContent = name
+    fileName.title = path || 'Documento sem nome'
+  }
 }

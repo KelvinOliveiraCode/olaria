@@ -9,12 +9,21 @@ const modalClose = document.getElementById('modalClose')
 export function toast(message, kind = '', ms = 3600) {
   const el = document.createElement('div')
   el.className = `toast ${kind ? `is-${kind}` : ''}`
-  el.innerHTML = `<span class="dot"></span><span></span>`
-  el.lastElementChild.textContent = message
-  toastsEl.appendChild(el)
-  setTimeout(() => {
+  el.setAttribute('role', 'status')
+  el.setAttribute('aria-live', 'polite')
+  el.innerHTML = `<span class="dot"></span><span></span><button type="button" class="toast-close" aria-label="Fechar aviso"><svg viewBox="0 0 12 12" stroke="currentColor" stroke-width="1.4"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>`
+  el.lastElementChild.previousElementSibling.textContent = message
+  const closeBtn = el.querySelector('.toast-close')
+  closeBtn?.addEventListener('click', () => {
     el.classList.add('is-out')
     setTimeout(() => el.remove(), 220)
+  })
+  toastsEl.appendChild(el)
+  setTimeout(() => {
+    if (el.isConnected) {
+      el.classList.add('is-out')
+      setTimeout(() => el.remove(), 220)
+    }
   }, ms)
 }
 

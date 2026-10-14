@@ -18,6 +18,7 @@
   var dropLine = null;
   var handles = [];
   var editingText = false;
+  var serializing = false;
 
   var TEXT_TAGS = ['H1','H2','H3','H4','H5','H6','P','A','BUTTON','SPAN','LI','BLOCKQUOTE','FIGCAPTION','TD','TH','LABEL','STRONG','EM','SMALL','LEGEND','DIV'];
 
@@ -669,6 +670,8 @@
   /* ---------------- serialização ---------------- */
 
   function serialize() {
+    if (serializing) return;
+    serializing = true;
     var self = document.querySelector('script[data-olaria="runtime"]');
     var removed = null;
     if (self) {
@@ -700,6 +703,7 @@
       document.documentElement.appendChild(removed);
     }
     post({ type: 'serialized', html: html });
+    serializing = false;
   }
 
   /* ---------------- mensagens do app ---------------- */

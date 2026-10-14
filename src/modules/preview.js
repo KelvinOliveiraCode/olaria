@@ -10,6 +10,21 @@ const iframe = document.getElementById('preview')
 let serializeResolve = null
 let ready = false
 
+// Origem alvo do postMessage. O iframe usa srcdoc (sem src), portanto
+// herda a origem do app — que muda conforme a plataforma e o modo:
+//   Windows Tauri 2 -> http://tauri.localhost
+//   macOS/Linux     -> tauri://localhost
+//   dev (Vite)      -> http://localhost:1420
+// `location.origin` é a única fonte correta para os três casos; fixar
+// 'tauri://localhost' à mão quebraria a ponte no Windows.
+const TARGET_ORIGIN = (() => {
+  try {
+    return window.location.origin || 'tauri://localhost'
+  } catch {
+    return 'tauri://localhost'
+  }
+})();
+
 export function initPreview() {
   window.addEventListener('message', onMessage)
 }
@@ -29,7 +44,7 @@ export function paint() {
 
 export function send(msg) {
   const w = iframe.contentWindow
-  if (w) w.postMessage({ src: 'olaria-app', ...msg }, '*')
+  if (w) w.postMessage({ src: 'olaria-app', ...msg }, TARGET_ORIGIN)
 }
 
 function onMessage(e) {

@@ -380,11 +380,12 @@ async function openFromDialog() {
 async function currentDoc() {
   const noCanvas = state.mode === 'code'
   if (!noCanvas && isReady()) {
-    const html = await Promise.race([
-      serialize(),
-      new Promise((resolve) => setTimeout(() => resolve(null), 1200)),
-    ])
-    if (html) return html
+    try {
+      const html = await serialize()
+      if (html) return html
+    } catch (err) {
+      console.warn('serialize falhou, usando editor como fallback:', err)
+    }
   }
   // O editor de código está sempre sincronizado; ele serve de reserva.
   return getEditorValue()
@@ -447,11 +448,18 @@ async function syncFromRuntime() {
     updateSaveState()
     return
   }
-  const html = await serialize()
-  state.doc = html
-  markDirty(true)
-  updateSaveState()
-  setEditorValue(html)
+  try {
+    const html = await serialize()
+    state.doc = html
+    markDirty(true)
+    updateSaveState()
+    setEditorValue(html)
+  } catch (err) {
+    console.warn('syncFromRuntime: serialize falhou:', err)
+    // Mantém o state.doc atual; o editor de código tem a versão mais recente
+    markDirty(true)
+    updateSaveState()
+  }
 }
 
 bus.on('selected', (info) => {
@@ -473,7 +481,10 @@ bus.on('deselected', () => {
 /* ---------------- desfazer / refazer ---------------- */
 
 function pushHistory() {
-  state.history.push(state.doc)
+  state.history.push({
+    doc: state.doc,
+    selectedPath: state.selected ? state.selected.path : null
+  })
   if (state.history.length > 200) state.history.shift()
   state.future = []
   updateUndoButtons()
@@ -481,15 +492,25 @@ function pushHistory() {
 
 function undo() {
   if (!state.history.length) return
-  state.future.push(state.doc)
-  state.doc = state.history.pop()
+  state.future.push({
+    doc: state.doc,
+    selectedPath: state.selected ? state.selected.path : null
+  })
+  const entry = state.history.pop()
+  state.doc = entry.doc
+  state.pendingSelectPath = entry.selectedPath
   applyHistoryDoc()
 }
 
 function redo() {
   if (!state.future.length) return
-  state.history.push(state.doc)
-  state.doc = state.future.pop()
+  state.history.push({
+    doc: state.doc,
+    selectedPath: state.selected ? state.selected.path : null
+  })
+  const entry = state.future.pop()
+  state.doc = entry.doc
+  state.pendingSelectPath = entry.selectedPath
   applyHistoryDoc()
 }
 
@@ -771,15 +792,18 @@ function wireWatcher() {
     try {
       const raw = await io.readText(path)
       const { html, map } = rewriteForPreview(raw, path)
-      assetMap = map
-      state.doc = html
-      state.history = []
-      state.future = []
-      state.selected = null
-      renderProps(null)
-      paint()
-      updateUndoButtons()
-      toast('O arquivo mudou fora do Olaria e foi recarregado.', '', 3000)
+      // Só reseta histórico se o conteúdo realmente mudou
+      if (html !== state.doc) {
+        assetMap = map
+        state.doc = html
+        state.history = []
+        state.future = []
+        state.selected = null
+        renderProps(null)
+        paint()
+        updateUndoButtons()
+        toast('O arquivo mudou fora do Olaria e foi recarregado.', '', 3000)
+      }
     } catch (err) {
       console.warn('recarga externa falhou', err)
     }

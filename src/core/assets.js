@@ -62,7 +62,10 @@ export function rewriteForPreview(html, filePath) {
 export function restoreForSave(html, map) {
   if (!map || map.size === 0) return html
   let out = html
-  for (const [rewritten, original] of map) {
+  // Sort by key length descending to avoid partial replacement issues
+  // (e.g., replace 'asset://.../image.png&' before 'asset://.../image.png')
+  const entries = Array.from(map.entries()).sort((a, b) => b[0].length - a[0].length)
+  for (const [rewritten, original] of entries) {
     out = out.split(rewritten).join(original)
   }
   return out

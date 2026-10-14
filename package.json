@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "icon": "node scripts/make-icon.mjs",
-    "check": "node scripts/check-syntax.mjs"
+    "check": "node scripts/check-syntax.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@codemirror/commands": "^6.8.1",
@@ -30,6 +31,8 @@
   "devDependencies": {
     "@tauri-apps/cli": "^2.9.0",
     "esbuild": "^0.25.0",
-    "vite": "^6.3.5"
+    "jsdom": "^29.1.1",
+    "vite": "^6.3.5",
+    "vitest": "^5.0.4"
   }
 }

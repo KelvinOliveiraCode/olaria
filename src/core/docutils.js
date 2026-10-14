@@ -16,11 +16,15 @@ function insertBeforeClose(html, closeTag, block, fallbackTag) {
 }
 
 export function injectUtils(doc, css) {
+  // Idempotent: não injeta duas vezes o mesmo bloco
+  if (hasBlock(doc, 'utils')) return doc
   const block = `<style data-olaria="utils">\n${css}\n</style>`
   return insertBeforeClose(doc, 'head', block, 'body')
 }
 
 export function injectAnim(doc, engineSource) {
+  // Idempotent: não injeta duas vezes o mesmo bloco
+  if (hasBlock(doc, 'anim')) return doc
   // Só o script: o estilo é criado pelo próprio motor quando roda.
   // (Um style vazio aqui só sujava o documento exportado.)
   const js = `<script data-olaria="anim">\n${engineSource}\n</script>`
