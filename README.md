@@ -1,5 +1,6 @@
-# Olaria
+# Olaria — Construtor de Landing Pages para Não-Técnicos
 
+<<<<<<< HEAD
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES%20modules-f7df1e?logo=javascript) ![Rust](https://img.shields.io/badge/Rust-1.77+-fa4340?logo=rust) ![Tauri](https://img.shields.io/badge/Tauri-2-000?logo=tauri) ![Vite](https://img.shields.io/badge/Vite-6-646cff?logo=vite) ![vitest](https://img.shields.io/badge/vitest-5-7e6cd6?logo=vitest)
 
 Construtor de landing pages de arquivo único para pessoas não técnicas: editor visual com painéis de propriedades, pré-visualização ao vivo, editor de código sincronizado e exportação de um `index.html` pronto para GitHub Pages ou qualquer hospedagem estática.
@@ -43,12 +44,33 @@ Pessoas não técnicas precisam de uma landing page (lançamento, portfólio, ev
 ## Como rodar
 
 Pré-requisitos: Node.js 20+ e Rust 1.77+. No Windows o app usa WebView2 (já incluído no Windows 11).
+=======
+![linguagem: JavaScript](https://img.shields.io/badge/linguagem-JavaScript-blue)  
+![status: concluido](https://img.shields.io/badge/status-concluido-green)  
+![licenca: MIT](https://img.shields.io/badge/licenca-MIT-blue)
 
-```bash
-npm install
-npm run tauri dev
-```
+### Descrição
+Construtor de landing pages para pessoas não-técnicas. Monta a página clicando nos elementos e, quando quiser, abre o código. A saída é sempre um arquivo HTML único, pronto para publicar de graça no GitHub Pages.
 
+### O que faz
+Construtor de landing pages para pessoas não-técnicas. Monta a página clicando nos elementos e, quando quiser, abre o código. A saída é sempre um arquivo HTML único, pronto para publicar de graça no GitHub Pages.
+
+### Tecnologias
+- JavaScript
+- HTML
+- CSS
+
+### Como usar
+Instale as dependências e execute os testes: `npm install && npm test`
+
+### Estrutura
+Consulte a árvore do repositório para a organização exata de pastas e arquivos.
+>>>>>>> 1151869cbd77b243a4ee656138ac2e9622672a40
+
+### Testes
+Não há contagem de testes registrada nesta metadata. Adicione e execute testes apropriados à linguagem (pytest para Python, ./mvnw test para Java, npm test para JavaScript/TypeScript).
+
+<<<<<<< HEAD
 Scripts disponíveis:
 
 - `npm run dev` — Vite em `http://localhost:1420` (modo navegador, apenas teste de interface; sem acesso a arquivos, pastas ou publicação)
@@ -125,3 +147,44 @@ Não há arquivo `LICENSE` neste repositório e o `package.json` está marcado c
 ## Autor
 
 Kelvin
+=======
+### Licença
+MIT
+
+### Autor
+Kelvin Oliveira — github.com/KelvinOliveiraCode
+
+---
+
+# Olaria — Landing Page Builder for Non-Technical Users
+
+![language: JavaScript](https://img.shields.io/badge/language-JavaScript-blue)  
+![status: concluido](https://img.shields.io/badge/status-concluido-green)  
+![license: MIT](https://img.shields.io/badge/license-MIT-blue)
+
+### Description
+Landing page builder for non-technical users. Build the page by clicking elements and open the code whenever you want. Output is always a single HTML file, ready to publish for free on GitHub Pages.
+
+### What it does
+Landing page builder for non-technical users. Build the page by clicking elements and open the code whenever you want. Output is always a single HTML file, ready to publish for free on GitHub Pages.
+
+### Technologies
+- JavaScript
+- HTML
+- CSS
+
+### How to use
+Install dependencies and run tests: `npm install && npm test`
+
+### Structure
+Check the repository tree for the exact folder and file organization.
+
+### Tests
+No test count recorded in this metadata. Add and run tests appropriate for the language (pytest for Python, ./mvnw test for Java, npm test for JavaScript/TypeScript).
+
+### License
+MIT
+
+### Author
+Kelvin Oliveira — github.com/KelvinOliveiraCode
+>>>>>>> 1151869cbd77b243a4ee656138ac2e9622672a40
