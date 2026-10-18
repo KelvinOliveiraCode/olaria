@@ -1,99 +1,106 @@
-
 # olaria
 
-![language: JavaScript/TypeScript](https://img.shields.io/badge/language-JS-TS-yellow?logo=javascript)   ![status: done](https://img.shields.io/badge/status-done-green)   ![license: MIT](https://img.shields.io/badge/license-MIT-blue)
+[![JavaScript/TypeScript](https://img.shields.io/badge/JS-TS-yellow?logo=javascript)](https://www.typescriptlang.org/)   ![status: done](https://img.shields.io/badge/status-done-green)   ![license: MIT](https://img.shields.io/badge/license-MIT-blue)
 
 ## Summary
 
-Web application in JavaScript/TypeScript. Olaria: Landing page builder for non-technical users. Visual editor + code view, exports single-file HTML for GitHub Pages.
+Olaria: Landing page builder for non-technical users. Visual editor + code view, exports single-file HTML for GitHub Pages.
+## Problem / Why it exists
 
-## Problem / why it exists
-
-The project delivers a web interface or utility for a specific scope, with focus on the browser as runtime and no dependency on its own server.
-
+The project addresses a practical scope and automates a task that, done manually, is repetitive and error-prone. The focus is on turning data or processes into reliable output, with readable, testable, and extensible code.
 ## Architecture
 
-- Presentation layer: components and pages that render the interface.
-- Logic layer: functions and hooks that process data and state.
-- Communication: HTTP requests to external APIs or local data, when applicable.
+Code files (29):
+- `app.js`
+- `assets.js`
+- `bus.js`
+- `docutils.js`
+- `state.js`
+- `store.js`
+- `ui.js`
+- `assets.test.js`
+- `docutils.test.js`
+- `state.test.js`
+- `main.js`
+- `anim-panel.js`
+- `code-editor.js`
+- `components.js`
+- `insert-panel.js`
+## Key Dependencies and Libraries
 
-The build is done with Vite (or equivalent tool), generating static files ready for hosting.
-
-## Technologies
-
-- JavaScript / TypeScript
-- @codemirror/commands
-- @codemirror/lang-css
-- @codemirror/lang-html
-- @codemirror/lang-javascript
-- @codemirror/language
-- @codemirror/search
-- @codemirror/state
-- @codemirror/view
-- @lezer/highlight
-- @tauri-apps/api
-- @tauri-apps/plugin-dialog
-- @tauri-apps/plugin-opener
-- codemirror
-- @tauri-apps/cli
-
-- No CI configured in this repository.
-
-The repository contains automated tests.
-
+- vite
 ## What it does
 
 Olaria: Landing page builder for non-technical users. Visual editor + code view, exports single-file HTML for GitHub Pages.
-
 ## How to run
 
 Requirements: Node.js and npm (or yarn/pnpm).
 
-```
+```bash
 # install dependencies
 npm install
 
 # run in development
-vite
+npm run dev
 
 # production build
-vite build
+npm run build
 
 # run tests
-vitest run
+npm test
 ```
+## Project Structure
 
-## Project structure
+- `app.js`
+- `assets.js`
+- `bus.js`
+- `docutils.js`
+- `state.js`
+- `store.js`
+- `ui.js`
+- `assets.test.js`
+- `docutils.test.js`
+- `state.test.js`
+- `main.js`
+- `anim-panel.js`
+- `code-editor.js`
+- `components.js`
+- `insert-panel.js`
+- `preview.js`
+- `props-panel.js`
+- `publish-panel.js`
+- `templates-a.js`
+- `templates-b.js`
+- `templates-c.js`
+- `templates-panel.js`
+- `templates.js`
+- `theme-panel.js`
+- `templates.test.js`
+## Trade-offs and Technical Decisions
 
-- src/ (29 arquivo(s))
-- src-tauri/ (13 arquivo(s))
-- scripts/ (2 arquivo(s))
-- docs/ (1 arquivo(s))
-- .gitignore, CONTEXTO.md, index.html, Olaria.exe, Olaria_0.3.0_x64-setup.exe, package-lock.json, package.json, README.en.md, README.md, vite.config.js
+- Single-file component architecture (`App.tsx`): all UI, state, and logic live in one file for deploy simplicity and no complex build.
+- Global state via `useState` + `useMemo`: avoids unnecessary Context API for small scope; `useMemo` memoizes expensive aggregations (charts, insights).
+- Inline mock data: transactions, budgets, goals, and notifications are TypeScript constants ,  enables prototyping and visual tests without backend.
+- Tailwind CSS + custom gradients: inline design system via utility classes; no separate CSS, eases visual maintenance.
+- Rule-based financial AI (`getAIResponse`): deterministic keyword responses; no external LLM call, works offline at zero cost.
+- Planned `localStorage` persistence: state survives reload; no server, no database.
+## Known Limitations
 
-
-## Trade-offs and decisions
-
-- Static build: easy to host (GitHub Pages, Vercel, Netlify) without a server.
-- Minimal dependencies to reduce maintenance surface.
-- Browser as the only runtime required.
-
-## Known limitations
-
-- Runs in the browser; depends on internet connection for external resources.
-
-
+- Fixed mock data; no integration with real banking APIs (Open Banking, Plaid, etc.).
+- Rule-based AI (`getAIResponse`); does not use real LLM or embeddings.
+- Persistence only in `localStorage` (planned); data lost when switching browser/device.
+- No authentication/authorization; single-user local application.
+- Charts via `recharts` with static data; no real-time data streaming.
 ## Tests
 
+```bash
+npm test
 ```
-vitest run
-```
-
+No automated tests detected in scan.
 ## License
 
 Distributed under the MIT License. See the `LICENSE` file in this repository.
-
 ## Author
 
-Kelvin Oliveira, https://github.com/KelvinOliveiraCode
+Kelvin Oliveira ,  https://github.com/KelvinOliveiraCode
 Portfolio: https://kelvinoliveiracode.github.io/portfolio/
